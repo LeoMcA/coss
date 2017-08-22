@@ -1,13 +1,15 @@
 from django.db import models
+from django.core.cache import cache
+from django.conf import settings
 
 from wagtail.wagtailadmin.edit_handlers import FieldPanel
 from wagtail.wagtailsnippets.models import register_snippet
 
+import requests
 
 @register_snippet
 class DiscourseCategory(models.Model):
     category_id = models.PositiveSmallIntegerField()
-    name = models.CharField(max_length=50, blank=True, default='')
 
     panels = [
         FieldPanel('category_id')
@@ -18,3 +20,18 @@ class DiscourseCategory(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+    @property
+    def name(self):
+        return self._show()['category']['name']
+
+    def _show(self):
+        return self._cached_request(f'{settings.DISCOURSE_URL}/c/{self.category_id}/show.json')
+
+    def _cached_request(self, path):
+        value = cache.get(path)
+        if value is None:
+            r = requests.get(path)
+            value = r.json()
+            cache.set(path, value, 900)
+        return value
