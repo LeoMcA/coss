@@ -173,6 +173,9 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = config('SECURE_HSTS_INCLUDE_SUBDOMAINS', defaul
 SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=31536000, cast=int)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Discourse
+DISCOURSE_URL = config('DISCOURSE_URL', default='https://discourse.mozilla.org')
+
 ##################
 # Wagtail Settings
 ##################
